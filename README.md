@@ -18,6 +18,9 @@ Install maws:
 go get github.com/favadi/maws
 ```
 
+Or download the pre-built binaries in [releases
+section](https://github.com/favadi/maws/releases).
+
 Put following configuration to your shell configuration file
 (~/.bashrc, ~/.zshrc):
 
