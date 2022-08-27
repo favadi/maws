@@ -15,6 +15,10 @@ Install the [AWS CLI version
 Install maws:
 
 ```shell
+# with homebrew
+brew install favadi/maws/maws
+
+# with go
 go get github.com/favadi/maws
 ```
 

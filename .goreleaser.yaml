@@ -25,3 +25,26 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+brews:
+  - name: maws
+    tap:
+      owner: favadi
+      name: homebrew-maws
+    homepage: "https://github.com/favadi/maws"
+    description: "MFA AWS CLI"
+    license: "BSD-2-Clause"
+    dependencies:
+      - name: awscli
+    install: |
+      bin.install "maws"
+      (bash_completion/"maws_bash_completer").write <<~EOS
+      complete -C aws_completer maws
+      EOS
+      (zsh_completion/"_maws").write <<~EOS
+      #compdef maws
+      _maws () {
+      local e
+      e=$(dirname ${funcsourcetrace[1]%:*})/aws_zsh_completer.sh
+      if [[ -f $e ]]; then source $e; fi
+      }
+      EOS
