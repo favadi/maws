@@ -32,7 +32,7 @@ Put following configuration to your shell configuration file
 # if you are using non-default aws profile
 export MAWS_PROFILE=""
 
-# enable completion 
+# enable completion, unnecessary if installed with homebrew
 complete -C aws_completer maws
 ```
 
