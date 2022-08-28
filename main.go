@@ -27,7 +27,7 @@ const (
 type awsTime time.Time
 
 func (t *awsTime) MarshalJSON() ([]byte, error) {
-	return []byte(time.Time(*t).Format(awsTimeLayout)), nil
+	return []byte(`"` + time.Time(*t).Format(awsTimeLayout) + `"`), nil
 }
 
 func (t *awsTime) UnmarshalJSON(data []byte) error {
@@ -69,18 +69,25 @@ func (t *SessionToken) Env() []string {
 	return env
 }
 
+func sessionTokenFile() string {
+	return filepath.Join(xdg.DataHome, applicationName, sessionTokenFileName)
+}
+
+func deleteSessionToken() error {
+	return os.RemoveAll(sessionTokenFile())
+}
+
 func persistSessionToken(st SessionToken) error {
-	dataDir := filepath.Join(xdg.DataHome, "maws")
+	dataDir := filepath.Join(xdg.DataHome, applicationName)
 	if err := os.MkdirAll(dataDir, 0700); err != nil {
 		return fmt.Errorf("create data dir: %w", err)
 	}
 
-	sessionTokenFile := filepath.Join(dataDir, sessionTokenFileName)
-	f, err := os.Create(sessionTokenFile)
+	f, err := os.Create(sessionTokenFile())
 	if err != nil {
 		return fmt.Errorf("create session token file: %w", err)
 	}
-	if err = json.NewEncoder(f).Encode(st); err != nil {
+	if err = json.NewEncoder(f).Encode(&st); err != nil {
 		return fmt.Errorf("write session token: %w", err)
 	}
 
@@ -88,8 +95,7 @@ func persistSessionToken(st SessionToken) error {
 }
 
 func loadSessionToken() (SessionToken, error) {
-	sessionTokenFile := filepath.Join(xdg.DataHome, "maws", sessionTokenFileName)
-	f, err := os.Open(sessionTokenFile)
+	f, err := os.Open(sessionTokenFile())
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			return promptMFA()
@@ -181,6 +187,14 @@ func runAWSCli(st SessionToken) error {
 }
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "delete-session-token" {
+		if err := deleteSessionToken(); err != nil {
+			log.Print(err.Error())
+			os.Exit(1)
+		}
+		return
+	}
+
 	st, err := loadSessionToken()
 	if err != nil {
 		log.Print(err.Error())
