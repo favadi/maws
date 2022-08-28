@@ -47,4 +47,7 @@ maws s3 ls
 
 # a million of time later, the token is expired, user will be prompted for OTP code
 maws s3 ls
+
+# delete the persisted session token, the user will be prompted for OTP code next time
+maws delete-session-token
 ```
