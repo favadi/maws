@@ -15,6 +15,10 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+    files:
+      - LICENSE
+      - README.md
+      - docker-credential-mecr-login
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -37,6 +41,7 @@ brews:
       - name: awscli
     install: |
       bin.install "maws"
+      bin.install "docker-credential-mecr-login"
       (bash_completion/"maws_bash_completer").write <<~EOS
         complete -C aws_completer maws
       EOS

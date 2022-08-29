@@ -69,6 +69,14 @@ func (t *SessionToken) Env() []string {
 	return env
 }
 
+func (t *SessionToken) ExportEnvs() string {
+	var sessionEnvs []string
+	sessionEnvs = append(sessionEnvs, fmt.Sprintf("export AWS_ACCESS_KEY_ID='%s'", t.Credentials.AccessKeyId))
+	sessionEnvs = append(sessionEnvs, fmt.Sprintf("export AWS_SECRET_ACCESS_KEY='%s'", t.Credentials.SecretAccessKey))
+	sessionEnvs = append(sessionEnvs, fmt.Sprintf("export AWS_SESSION_TOKEN='%s'", t.Credentials.SessionToken))
+	return strings.Join(sessionEnvs, "\n")
+}
+
 func sessionTokenFile() string {
 	return filepath.Join(xdg.DataHome, applicationName, sessionTokenFileName)
 }
@@ -199,6 +207,11 @@ func main() {
 	if err != nil {
 		log.Print(err.Error())
 		os.Exit(1)
+	}
+
+	if len(os.Args) == 2 && os.Args[1] == "export-envs" {
+		fmt.Println(st.ExportEnvs())
+		return
 	}
 
 	if err := runAWSCli(st); err != nil {

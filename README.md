@@ -36,6 +36,14 @@ export MAWS_PROFILE=""
 complete -C aws_completer maws
 ```
 
+If you are using
+[amazon-ecr-credential-helper](https://github.com/awslabs/amazon-ecr-credential-helper),
+there is `docker-credential-mecr-login` wrapper script that use `maws`
+instead of `aws` for MFA authentication. To use it, copy
+`docker-credential-mecr-login` to somewhere in PATH (unnecessary if
+installed with homebrew) and replace `ecr-login` in
+`~/.docker/config.json` with `mecr-login`.
+
 ## Example usages
 
 ```shell
@@ -50,4 +58,7 @@ maws s3 ls
 
 # delete the persisted session token, the user will be prompted for OTP code next time
 maws delete-session-token
+
+# export environment variables to use persisted session token with normal aws command
+eval $(maws export-envs)
 ```
